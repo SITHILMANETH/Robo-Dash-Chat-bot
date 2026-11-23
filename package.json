@@ -1,0 +1,8 @@
+{
+  "name": "robodash-bot",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@elevenlabs/elevenlabs-js": "^2.79.0"
+  }
+}
