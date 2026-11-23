@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-const MODEL = "gemini-2.5-flash";
+const MODELS = ["gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-flash-lite-latest"];
 
 function isHistoryMessage(value) {
   return (
@@ -40,22 +40,26 @@ export default async function handler(req, res) {
       ...history.filter(isHistoryMessage).slice(-6),
       { role: "user", parts: [{ text: message.trim() }] },
     ];
-    const url =
-      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}` +
-      `:generateContent?key=${encodeURIComponent(apiKey)}`;
-    const response = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: systemText }] },
-        contents,
-        generationConfig: { temperature: 0.2, maxOutputTokens: 600 },
-      }),
-    });
-
-    const data = await response.json();
-    if (!response.ok) {
-      console.error("Gemini request failed:", response.status, data);
+    let data;
+    let response;
+    for (const model of MODELS) {
+      const url =
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}` +
+        `:generateContent?key=${encodeURIComponent(apiKey)}`;
+      response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: systemText }] },
+          contents,
+          generationConfig: { temperature: 0.2, maxOutputTokens: 600 },
+        }),
+      });
+      data = await response.json();
+      if (response.ok) break;
+      console.error(`Gemini ${model} failed:`, response.status, data);
+    }
+    if (!response?.ok) {
       return res.status(502).json({ error: "Unable to contact the language service" });
     }
 

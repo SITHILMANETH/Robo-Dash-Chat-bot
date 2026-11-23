@@ -2,6 +2,9 @@
   "name": "robodash-bot",
   "version": "1.0.0",
   "type": "module",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env --env-file-if-exists=.env.local server.mjs"
+  },
   "dependencies": {
     "@elevenlabs/elevenlabs-js": "^2.79.0"
   }

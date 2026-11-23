@@ -124,6 +124,11 @@
       talking.hidden = false;
       addMsg(text, "user");
       const waiting = addMsg("Thinking...", "bot");
+      if (location.hostname.endsWith(".github.io")) {
+        waiting.textContent = "This GitHub Pages preview can show the interface, but chat and voice need the secure API server. Deploy the API on Vercel or run npm start locally.";
+        talking.hidden = true;
+        return;
+      }
       try {
         const response = await fetch("/api/chat", {
           method: "POST",
@@ -137,7 +142,7 @@
         history.push({ role: "model", parts: [{ text: data.reply }] });
         await speak(data.reply);
       } catch (error) {
-        waiting.textContent = "Connection problem. Please try again.";
+        waiting.textContent = error.message || "Connection problem. Please try again.";
         talking.hidden = true;
         console.error(error);
       }
