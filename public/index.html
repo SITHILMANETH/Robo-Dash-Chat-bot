@@ -325,7 +325,20 @@
     }
     @media (max-height: 560px) {
       .workspace { margin-top: 8px; margin-bottom: 8px; }
-      .welcome { display: none; }
+      .welcome {
+        min-height: 0;
+        margin-bottom: 8px;
+        padding: 10px 12px;
+        grid-template-columns: minmax(0, 1fr) 126px;
+      }
+      .pet-frame { height: 72px; }
+    }
+    @media (max-height: 560px) and (max-width: 380px) {
+      .welcome {
+        grid-template-columns: minmax(0, 1fr) 88px;
+        padding: 8px;
+      }
+      .pet-frame { height: 42px; }
     }
     @media (max-height: 360px) {
       #chips, .footer-note { display: none; }
@@ -936,11 +949,11 @@
 
       pixel(0, 135, 256, 5, "#3b2456");
       pixel(0, 135, 256, 1, "#7a56a0");
-      const idleX = 129 + Math.sin(time * .65) * 28;
-      const idleY = 84 + Math.sin(time * 1.7) * 5;
+      const idleX = 128 + Math.sin(time * .48) * 40;
+      const idleY = 80 + Math.sin(time * 1.2) * 8;
       const birdX = clamp(petPointer.active ? petPointer.x : idleX, 84, 166);
       const birdY = clamp(petPointer.active ? petPointer.y : idleY, 55, 95);
-      const flap = reducedMotion.matches ? 0 : Math.sin(time * 19) * 10;
+      const flap = reducedMotion.matches ? 0 : Math.sin(time * 15) * 12;
 
       ctx.save();
       ctx.translate(birdX, birdY);
