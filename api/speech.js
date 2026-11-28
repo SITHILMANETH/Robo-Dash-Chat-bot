@@ -2,6 +2,7 @@ import { ElevenLabsClient } from "@elevenlabs/elevenlabs-js";
 import { Readable } from "node:stream";
 
 const VOICE_ID = "JBFqnCBsd6RMkjVDRZzb";
+const ELEVENLABS_LANGUAGES = new Set(["en", "hi", "ta"]);
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "https://sithilmaneth.github.io");
@@ -12,9 +13,12 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Use POST" });
   }
 
-  const { text } = req.body || {};
+  const { text, language = "en" } = req.body || {};
   if (typeof text !== "string" || !text.trim() || text.length > 3000) {
     return res.status(400).json({ error: "Text missing or too long" });
+  }
+  if (!ELEVENLABS_LANGUAGES.has(language)) {
+    return res.status(400).json({ error: "Speech is unavailable in this language" });
   }
 
   if (!process.env.ELEVENLABS_API_KEY) {
